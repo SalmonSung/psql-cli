@@ -190,9 +190,9 @@ def sql_perquery_latency_metrics(metrics: CloudSQLMetrics) -> go.Figure:
             ts_ms[ts] = ms_point
             ts_pr75_ms[ts] = pr75 / 1000
             ts_avg_ms[ts] = mean / 1000
-            cd_map[ts] = [_format_sql_for_hover(query_hash), item.database, item.user, item.querystring, mean / 1000, count]
+            cd_map[ts] = [query_hash, item.database, item.user, _format_sql_for_hover(item.querystring), mean / 1000, count]
 
-        customdata = [cd_map.get(ts, [_format_sql_for_hover(query_hash), item.database, item.user, item.querystring, None, None])
+        customdata = [cd_map.get(ts, [query_hash, item.database, item.user, _format_sql_for_hover(item.querystring), None, None])
                       for ts in bar_x_ts]
 
         legend_name = query_hash + f"({item.database})"
