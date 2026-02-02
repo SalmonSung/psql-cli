@@ -27,13 +27,15 @@ It cannot modify database configuration, execute SQL, drop tables, or change any
 * **Fully Local Execution:** All data processing and report generation happen entirely on your local machine.
 No telemetry, metrics, or sensitive metadata are sent to external or third-party services.
 
-# Getting Started
+# Table of Contents
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
 
-### Prerequisites
+## Prerequisites  
 
 * Google Cloud CLI (`gcloud`) installed if you've never generated ADC on your own machine.
 
-# Installation
+# Installation  
 
 ### From source (recommended for development)
 
