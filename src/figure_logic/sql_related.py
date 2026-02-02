@@ -10,7 +10,7 @@ from collections import defaultdict
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-from src.metrics import CloudSQLMetrics, PerqueryLockTimeMetric, PerqueryLatencyMetric
+from src.metrics import CloudSQLMetrics, PerqueryLockTimeMetric, PerqueryLatencyMetric, PerqueryIOTimeMetric
 import src.config as config
 
 PALETTE_20 = [
@@ -413,25 +413,47 @@ def sql_perquery_latency_metrics(metrics: CloudSQLMetrics) -> go.Figure:
     return fig
 
 def sql_perquery_io_time_metrics(metrics: CloudSQLMetrics) -> go.Figure:
-    grouped: dict[tuple[str, str, str, str, str], list] = defaultdict(list)
-
+    grouped: list[tuple[str, str, str, str, int, list]] = []
     x_ts = []
     for item in metrics.perquery_IO_time_metrics:
-        key = (
+        copied_item = item.perquery_IO_time.copy()
+        copied_item.group_by_minutes(config.GROUP_BY_MINUTES)
+        total_io_wait_time = sum(copied_item.data())
+        value = (
             item.user,
             item.querystring,
             item.io_type,
             item.query_hash,
             item.database,
+            total_io_wait_time,
+            item.perquery_IO_time.data()
         )
-        copied_item = item.perquery_IO_time.copy()
-        copied_item.group_by_minutes(config.GROUP_BY_MINUTES)
-        grouped[key].append(copied_item)
-
+        grouped.append(value)
         if len(x_ts) == 0:
             x_ts = copied_item.timestamps()
 
+    # --- top 90% ---
+    grouped.sort(key=lambda x: x[4], reverse=True)
 
+    total_io_wait_time_all = sum(wait_time for _, _, _, _, wait_time, _ in grouped)
+
+    kept: list[tuple[str, str, str, str, int, list]] = []
+    cumulative = 0.0
+    threshold = 0.9 * total_io_wait_time_all
+    for item in grouped:
+        kept.append(item)
+        cumulative += item[4]
+        if cumulative > threshold:
+            break
+    rest = total_io_wait_time_all - cumulative
+
+    # --- Build Pie Data ---
+    pie_label = []
+    pie_values_ms = []
+    custom_data: list[list] = []
+    pie_colors = []
+    color_map = dict[str, str] = {}
+    #todo: complete the rest of the code like sql_perquery_latency_metrics()
 
     pass
 
