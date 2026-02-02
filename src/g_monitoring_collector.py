@@ -528,8 +528,8 @@ class GMonitoringCollector:
         series_list = list(client.list_time_series(request=request))
         logging.info("Fetched %d time series for perquery IO time", len(series_list))
 
-        # Group by identifying labels (so each unique query_hash/db/user becomes one object)
-        grouped: Dict[Tuple[str, str, str], PerqueryIOTimeMetric] = {}
+        # Group by identifying labels (so each unique query_hash/io_type/db/user becomes one object)
+        grouped: Dict[Tuple[str, str, str, str], PerqueryIOTimeMetric] = {}
 
         for ts in series_list:
             mlabels = dict(ts.metric.labels)
@@ -537,11 +537,13 @@ class GMonitoringCollector:
 
             querystring = mlabels.get("querystring")
             query_hash = mlabels.get("query_hash")
+            io_type = mlabels.get("io_type")
             user = mlabels.get("user")
             database = rlabels.get("database")
 
             key = (
                 query_hash or "",
+                io_type or "",
                 user or "",
                 database or "",
             )
@@ -551,6 +553,7 @@ class GMonitoringCollector:
                 metric_obj = PerqueryIOTimeMetric(
                     querystring=querystring,
                     query_hash=query_hash,
+                    io_type=io_type,
                     user=user,
                     database=database,
                     perquery_IO_time=TimeSeries(
@@ -576,7 +579,7 @@ class GMonitoringCollector:
             obj.perquery_IO_time.values.sort(key=lambda tv: tv[0])
 
         logging.info(
-            "Returning %d perquery IO time metrics (unique query_hash/db/user buckets)",
+            "Returning %d perquery IO time metrics (unique query_hash/io_type/db/user buckets)",
             len(result),
         )
 
