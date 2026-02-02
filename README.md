@@ -28,8 +28,10 @@ It cannot modify database configuration, execute SQL, drop tables, or change any
 No telemetry, metrics, or sensitive metadata are sent to external or third-party services.
 
 # Table of Contents
-- [Prerequisites](#prerequisites)
+- [Prerequisites](##prerequisites)
 - [Installation](#installation)
+- [Usage](#usage)
+- [Command notes](#command-notes)
 
 ## Prerequisites  
 
@@ -43,7 +45,7 @@ No telemetry, metrics, or sensitive metadata are sent to external or third-party
 pip install -e .
 ```
 
-# Usage
+# Usage  
 
 Once installed, the `pshs` console script is available:
 
