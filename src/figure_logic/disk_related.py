@@ -6,8 +6,8 @@ from typing import Dict, List, Optional, Tuple
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
-from src.metrics import CloudSQLMetrics
-from src.utils import bytes_to_unit
+from metrics import CloudSQLMetrics
+from utils import bytes_to_unit
 
 
 

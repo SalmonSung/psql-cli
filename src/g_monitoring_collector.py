@@ -5,7 +5,7 @@ from typing import List, Any, Callable, Dict, Optional, Tuple
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from google.cloud import monitoring_v3
 
-from src.metrics import *
+from metrics import *
 
 
 class GMonitoringCollector:
@@ -1133,7 +1133,7 @@ class GMonitoringCollector:
 
 
 if __name__ == "__main__":
-    from src.utils import load_db_secret_list
+    from utils import load_db_secret_list
 
     db_secret = load_db_secret_list(r"C:\Users\kaiyi\Desktop\github\psql-cli\src\data\db-secrets.json")[0]
     metric = GMonitoringCollector(db_secret["project_id"], db_secret["instance_id"], 1).generate_cloudsql_metrics()

@@ -6,8 +6,8 @@ import pandas as pd
 import plotly.graph_objects as go
 from dns.query import default_socket_factory
 from plotly.subplots import make_subplots
-from src.metrics import TimeSeries, CloudSQLMetrics, PSQLNumBackendsByStateMetric
-import src.config as config
+from metrics import TimeSeries, CloudSQLMetrics, PSQLNumBackendsByStateMetric
+import config as config
 
 CONNECTION_STATE_COLORS = {
     "active": "red",

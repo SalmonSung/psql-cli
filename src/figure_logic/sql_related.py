@@ -10,8 +10,8 @@ from collections import defaultdict
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-from src.metrics import CloudSQLMetrics, PerqueryLockTimeMetric, PerqueryLatencyMetric, PerqueryIOTimeMetric
-import src.config as config
+from metrics import CloudSQLMetrics, PerqueryLockTimeMetric, PerqueryLatencyMetric, PerqueryIOTimeMetric
+import config as config
 
 PALETTE_20 = [
     "#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd",
