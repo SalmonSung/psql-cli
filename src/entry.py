@@ -1,17 +1,17 @@
 from pathlib import Path
 import shutil
 
-from src.figure_logic.sql_related import *
-from src.figure_logic.wal_related import *
-from src.figure_logic.network_related import *
-from src.figure_logic.disk_related import *
-from src.figure_logic.general_related import *
-from src.metrics import CloudSQLMetrics
-from src.hotspots_report import HotspotsReport
-from src.cloudsql_postgres import CloudSQLPostgres
-import src.config as config
+from figure_logic.sql_related import *
+from figure_logic.wal_related import *
+from figure_logic.network_related import *
+from figure_logic.disk_related import *
+from figure_logic.general_related import *
+from metrics import CloudSQLMetrics
+from hotspots_report import HotspotsReport
+from cloudsql_postgres import CloudSQLPostgres
+import config as config
 
-from src.g_monitoring_collector import GMonitoringCollector
+from g_monitoring_collector import GMonitoringCollector
 
 
 # MetricSpec + MetricsLoaderMP come from the ProcessPool version we wrote earlier

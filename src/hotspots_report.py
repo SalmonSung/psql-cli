@@ -10,7 +10,7 @@ from typing import Any, Dict, Iterable, List, Optional
 from jinja2 import Environment, BaseLoader
 from markupsafe import Markup, escape
 
-import src.config as config
+import config as config
 
 try:
     # Plotly provides this helper to inline plotly.js as a string (offline, single-file)

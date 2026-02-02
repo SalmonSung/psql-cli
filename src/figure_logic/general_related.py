@@ -5,13 +5,13 @@ from pathlib import Path
 from datetime import datetime
 from typing import Optional
 
-from src.utils import bytes_to_unit
-import src.config as config
+from utils import bytes_to_unit
+import config as config
 
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
-from src.metrics import CloudSQLMetrics, TimeSeries
+from metrics import CloudSQLMetrics, TimeSeries
 
 
 def general_database_overview(metrics: CloudSQLMetrics) -> go.Figure:
