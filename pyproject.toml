@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "PostgreSQL Hotspots"
+version = "0.1.0"
+description = "Cli tool"
+requires-python = ">=3.13"
+dependencies = []
+
+[project.scripts]
+pshs = "pshs:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
