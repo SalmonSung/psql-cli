@@ -33,7 +33,7 @@ No telemetry, metrics, or sensitive metadata are sent to external or third-party
 - [Usage](#usage)
 - [Command notes](#command-notes)
 - [History](#history)
-  - [v.0.1.0](##v010)
+  - [v.0.1.0](#v010)
 
 ## Prerequisites  
 
