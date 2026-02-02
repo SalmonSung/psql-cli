@@ -2,7 +2,9 @@
 
 **PostgreSQL Hotspots** is a diagnostic tool built for high-pressure “database down” situations. It analyzes database
 behavior without connecting to the database itself, allowing you to identify performance bottlenecks and resource
-contention even when PostgreSQL is completely unresponsive.
+contention even when PostgreSQL is completely unresponsive. Besides, it generates a static `.html` file along with suspicious info in `.txt` files - Simply the analysis sharing process
+<img width="1781" height="881" alt="image" src="https://github.com/user-attachments/assets/569acc47-c61a-450e-b326-d6ce9ba13a00" />
+
 
 ## Key Features
 
