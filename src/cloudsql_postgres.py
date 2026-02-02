@@ -11,7 +11,7 @@ from sqlalchemy import text
 
 from google.cloud.sql.connector import Connector
 
-from src.utils import load_db_secret_list
+from utils import load_db_secret_list
 
 class CloudSQLPostgres:
     """

@@ -10,8 +10,8 @@ from collections import defaultdict
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-from src.metrics import CloudSQLMetrics, WALFlushedBytesCountMetric
-import src.config as config
+from metrics import CloudSQLMetrics, WALFlushedBytesCountMetric
+import config as config
 
 def wal_overview(metrics: CloudSQLMetrics) -> go.Figure:
     wal_fbc = metrics.wal_flushed_bytes_metrics.wal_flushed_bytes_count
