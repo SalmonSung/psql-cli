@@ -62,7 +62,7 @@ pshs generate PROJECT_ID INSTANCE_ID OUTPUT_DIR --start-time 2026-01-01T14:00 du
 
 # History  
 
-## v.0.1.0
+## v.0.1.0  
 - Support command `generate`
 - Customised observation time range enable
 - Provide General History and SQL analysis
