@@ -32,6 +32,8 @@ No telemetry, metrics, or sensitive metadata are sent to external or third-party
 - [Installation](#installation)
 - [Usage](#usage)
 - [Command notes](#command-notes)
+- [History](#history)
+  - [v.0.1.0](##v.0.1.0)
 
 ## Prerequisites  
 
@@ -57,3 +59,10 @@ pshs generate PROJECT_ID INSTANCE_ID OUTPUT_DIR --start-time 2026-01-01T14:00 du
 
 * Provide exactly two of `--start-time`, `--end-time`, and `--duration-hours`.
 * `--safe` (default) skips ADC login; use `--no-safe` to trigger ADC login.
+
+# History  
+
+## v.0.1.0
+- Support command `generate`
+- Customised observation time range enable
+- Provide General History and SQL analysis
