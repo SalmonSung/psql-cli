@@ -413,49 +413,174 @@ def sql_perquery_latency_metrics(metrics: CloudSQLMetrics) -> go.Figure:
     return fig
 
 def sql_perquery_io_time_metrics(metrics: CloudSQLMetrics) -> go.Figure:
-    grouped: list[tuple[str, str, str, str, int, list]] = []
-    x_ts = []
+    items_with_totals: list[tuple[PerqueryIOTimeMetric, float, list[datetime]]] = []
     for item in metrics.perquery_IO_time_metrics:
         copied_item = item.perquery_IO_time.copy()
         copied_item.group_by_minutes(config.GROUP_BY_MINUTES)
-        total_io_wait_time = sum(copied_item.data())
-        value = (
-            item.user,
-            item.querystring,
-            item.io_type,
-            item.query_hash,
-            item.database,
-            total_io_wait_time,
-            item.perquery_IO_time.data()
-        )
-        grouped.append(value)
-        if len(x_ts) == 0:
-            x_ts = copied_item.timestamps()
+        total_io_wait_time = float(sum(copied_item.data()))
+        items_with_totals.append((item, total_io_wait_time, copied_item.timestamps()))
 
-    # --- top 90% ---
-    grouped.sort(key=lambda x: x[4], reverse=True)
+    items_with_totals.sort(key=lambda x: x[1], reverse=True)
+    total_io_wait_time_all = sum(total for _, total, _ in items_with_totals)
+    if total_io_wait_time_all <= 0:
+        fig = go.Figure()
+        fig.update_layout(title="No IO wait time data")
+        return fig
 
-    total_io_wait_time_all = sum(wait_time for _, _, _, _, wait_time, _ in grouped)
-
-    kept: list[tuple[str, str, str, str, int, list]] = []
+    kept: list[tuple[PerqueryIOTimeMetric, float]] = []
     cumulative = 0.0
     threshold = 0.9 * total_io_wait_time_all
-    for item in grouped:
-        kept.append(item)
-        cumulative += item[4]
-        if cumulative > threshold:
+    for item, total, _ in items_with_totals:
+        kept.append((item, total))
+        cumulative += total
+        if cumulative >= threshold:
             break
     rest = total_io_wait_time_all - cumulative
 
-    # --- Build Pie Data ---
-    pie_label = []
-    pie_values_ms = []
-    custom_data: list[list] = []
+    pie_labels: list[str] = []
+    pie_values_ms: list[float] = []
+    custom_data: list[list[str]] = []
     pie_colors = []
-    color_map = dict[str, str] = {}
-    #todo: complete the rest of the code like sql_perquery_latency_metrics()
+    color_map: dict[str, str] = {}
 
-    pass
+    for i, (item, _total) in enumerate(kept):
+        qh = item.query_hash or "(no hash)"
+        color_map[qh] = PALETTE_20[i % len(PALETTE_20)]
+
+    for item, total in kept:
+        qh = item.query_hash or "(no hash)"
+        pie_labels.append(qh)
+        pie_values_ms.append(total / 1000)
+        custom_data.append(
+            [
+                item.querystring,
+                item.database,
+                item.user,
+                item.io_type,
+            ]
+        )
+        pie_colors.append(color_map[qh])
+
+    pie_labels.append("Others")
+    pie_values_ms.append(rest / 1000)
+    pie_colors.append(OTHERS_COLOR)
+    custom_data.append(["Aggregated", "Aggregated", "Aggregated", "Aggregated"])
+
+    hover_text = [
+        f"<b>SQL Hash:</b> {lbl}<br>"
+        f"<b>DB:</b> {db}<br>"
+        f"<b>User:</b> {usr}<br>"
+        f"<b>IO Type:</b> {io_type}<br>"
+        f"<b>Total IO Wait:</b> {val:.2f} ms<br><br>"
+        f"<b>Query:</b><br>{_format_sql_for_hover(qry)}<br>"
+        for (qry, db, usr, io_type), lbl, val in zip(custom_data, pie_labels, pie_values_ms)
+    ]
+
+    fig = make_subplots(
+        rows=1,
+        cols=2,
+        specs=[[{"type": "domain"}, {"type": "xy"}]],
+        column_widths=[0.40, 0.60],
+        horizontal_spacing=0.08,
+        subplot_titles=["Top IO Wait SQL", "IO Wait Time by time"],
+    )
+
+    fig.add_trace(
+        go.Pie(
+            labels=pie_labels,
+            values=pie_values_ms,
+            text=hover_text,
+            customdata=custom_data,
+            marker=dict(colors=pie_colors),
+            hoverinfo="text+percent",
+            hovertemplate=(
+                "%{text}"
+                "<b>Share:</b><br>%{percent}<br>"
+                "<extra></extra>"
+            ),
+            hole=0.10,
+            sort=False,
+            textinfo="label",
+            textposition="inside",
+            insidetextorientation="radial",
+            showlegend=False,
+        ),
+        row=1, col=1
+    )
+
+    bar_x_ts: list[datetime] = []
+    for item, _total in kept:
+        copied_item = item.perquery_IO_time.copy()
+        copied_item.group_by_minutes(config.GROUP_BY_MINUTES)
+        for ts in copied_item.timestamps():
+            if ts not in bar_x_ts:
+                bar_x_ts.append(ts)
+    bar_x_ts.sort()
+
+    for item, _total in kept:
+        qh = item.query_hash or "(no hash)"
+        copied_item = item.perquery_IO_time.copy()
+        copied_item.group_by_minutes(config.GROUP_BY_MINUTES)
+        ts_map = {ts: val / 1000 for ts, val in copied_item.values}
+        customdata = [
+            [
+                qh,
+                item.database,
+                item.user,
+                item.querystring,
+                item.io_type,
+            ]
+            for _ in bar_x_ts
+        ]
+
+        fig.add_trace(
+            go.Bar(
+                x=bar_x_ts,
+                y=[ts_map.get(ts, None) for ts in bar_x_ts],
+                name=f"{qh}({item.database})",
+                marker_color=color_map[qh],
+                customdata=customdata,
+                legendgroup=qh,
+                hovertemplate=(
+                    "<b>Time:</b> %{x|%H:%M} - "
+                    "%{x|%Y/%m/%d} - "
+                    "%{x|%a}<br><br>"
+                    "<b>SQL Hash:</b> %{customdata[0]}<br>"
+                    "<b>DB:</b> %{customdata[1]}<br>"
+                    "<b>User:</b> %{customdata[2]}<br>"
+                    "<b>IO Type:</b> %{customdata[4]}<br>"
+                    "<b>IO Wait:</b> %{y:.2f} ms<br><br>"
+                    "<b>Query:</b><br>%{customdata[3]}<br>"
+                    "<extra></extra>"
+                ),
+                showlegend=True,
+            ),
+            row=1, col=2
+        )
+
+    fig.update_layout(barmode="stack")
+
+    fig.update_xaxes(
+        tickformat="%H:%M<br>%Y/%m/%d<br>%a",
+        row=1, col=2
+    )
+    fig.update_yaxes(
+        title_text="IO wait (ms)",
+        row=1, col=2
+    )
+
+    fig.update_layout(
+        height=650,
+        margin=dict(l=20, r=20, t=60, b=120),
+        legend=dict(
+            orientation="h",
+            xanchor="left",
+            x=0.0,
+            yanchor="top",
+            y=-0.10
+        ))
+
+    return fig
 
 
 def sql_perquery_lock_time_metrics(metrics: CloudSQLMetrics) -> go.Figure:
