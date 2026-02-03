@@ -1,0 +1,1014 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="color-scheme" content="light" />
+  <title>{{ page_title }}</title>
+
+  <style>
+    :root{
+      --bg: #F7F7F7;
+      --card: #FFFFFF;
+      --primary: #6699CC;
+      --accent: #A8D5BA;
+      --text: #24292F;
+      --muted: #57606a;
+      --border: #E1E4E8;
+      --shadow: 0 1px 3px rgba(0,0,0,0.05);
+
+      --radius: 12px;
+      --sidebar-w: 320px;
+      --sidebar-collapsed-w: 64px;
+
+      --toolbar-h: 56px;
+      --grid-cols: 1;
+
+      --font-ui: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Liberation Sans", sans-serif;
+      --font-mono: "Source Code Pro", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    *{ box-sizing: border-box; }
+    html, body{ height: 100%; }
+    body{
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-ui);
+      line-height: 1.35;
+    }
+
+    .app{
+      display: grid;
+      grid-template-columns: var(--sidebar-w) 1fr;
+      min-height: 100vh;
+    }
+    body[data-sidebar="collapsed"] .app{
+      grid-template-columns: var(--sidebar-collapsed-w) 1fr;
+    }
+
+    .sidebar{
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      background: #fff;
+      border-right: 1px solid var(--border);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar__top{
+      padding: 14px 14px 10px 14px;
+      border-bottom: 1px solid var(--border);
+      display: grid;
+      gap: 10px;
+    }
+
+    .brand{
+      display: grid;
+      grid-template-columns: 32px 1fr;
+      gap: 10px;
+      align-items: center;
+      min-height: 36px;
+    }
+    .brand__logo{
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      box-shadow: var(--shadow);
+    }
+    .brand__text{
+      display: grid;
+      gap: 2px;
+      min-width: 0;
+    }
+    .brand__title{
+      font-weight: 650;
+      font-size: 14px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .brand__sub{
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    body[data-sidebar="collapsed"] .brand{
+      grid-template-columns: 32px;
+    }
+    body[data-sidebar="collapsed"] .brand__text{
+      display: none;
+    }
+
+    .segmented{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 3px;
+      gap: 4px;
+    }
+    .segmented button{
+      border: 0;
+      border-radius: 999px;
+      background: transparent;
+      padding: 8px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+      cursor: pointer;
+    }
+    .segmented button[aria-pressed="true"]{
+      background: #fff;
+      color: var(--text);
+      box-shadow: var(--shadow);
+      outline: 2px solid rgba(102,153,204,0.25);
+      outline-offset: 0;
+    }
+
+    .search{
+      display: grid;
+      gap: 6px;
+    }
+    .search label{
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .search input{
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 9px 10px;
+      font-size: 13px;
+      outline: none;
+      background: #fff;
+    }
+    .search input:focus{
+      border-color: rgba(102,153,204,0.7);
+      box-shadow: 0 0 0 3px rgba(102,153,204,0.15);
+    }
+
+    body[data-sidebar="collapsed"] .segmented,
+    body[data-sidebar="collapsed"] .search{
+      display: none;
+    }
+
+    .nav{
+      overflow: auto;
+      padding: 10px 10px 14px 10px;
+    }
+    .nav__group{
+      margin: 10px 0 14px 0;
+    }
+    .nav__group h3{
+      margin: 10px 8px 8px 8px;
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    body[data-sidebar="collapsed"] .nav__group h3{
+      display: none;
+    }
+
+    .nav__item{
+      display: grid;
+      grid-template-columns: 22px 1fr;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      cursor: pointer;
+      user-select: none;
+      border: 1px solid transparent;
+    }
+    .nav__item:hover{
+      background: rgba(102,153,204,0.08);
+      border-color: rgba(102,153,204,0.12);
+    }
+    .nav__item:focus{
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(102,153,204,0.18);
+    }
+    .nav__icon{
+      width: 18px;
+      height: 18px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .nav__title{
+      font-size: 13px;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    body[data-sidebar="collapsed"] .nav__item{
+      grid-template-columns: 22px;
+      justify-content: center;
+      padding: 10px 10px;
+    }
+    body[data-sidebar="collapsed"] .nav__title{
+      display: none;
+    }
+
+    .nav__check{
+      display: none;
+      width: 18px;
+      height: 18px;
+      margin: 0;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+    body[data-view="compare"] .nav__check{ display: inline-block; }
+    body[data-view="compare"] .nav__icon{ display: none; }
+
+    .main{
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .toolbar{
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      height: var(--toolbar-h);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 14px;
+      background: rgba(255,255,255,0.8);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .toolbar__left{
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+    .toolbar__right{
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .iconbtn{
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: #fff;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      transition: box-shadow 120ms ease, border-color 120ms ease;
+    }
+    .iconbtn:hover{
+      border-color: rgba(102,153,204,0.35);
+      box-shadow: 0 0 0 3px rgba(102,153,204,0.12);
+    }
+
+    .reportmeta{
+      display: grid;
+      gap: 2px;
+      min-width: 0;
+    }
+    .reportmeta__title{
+      font-weight: 700;
+      font-size: 14px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .reportmeta__sub{
+      font-size: 12px;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .pill{
+      border: 1px solid var(--border);
+      background: #fff;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12px;
+      color: var(--muted);
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      cursor: pointer;
+    }
+    .pill strong{ color: var(--text); font-weight: 650; }
+
+    .gridctl{
+      display: none;
+      gap: 8px;
+      align-items: center;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .gridctl select{
+      border: 0;
+      background: transparent;
+      font: inherit;
+      color: var(--text);
+      outline: none;
+      cursor: pointer;
+    }
+    body[data-view="compare"] .gridctl{ display: inline-flex; }
+
+    .content{
+      padding: 14px;
+      display: grid;
+      gap: 12px;
+    }
+
+    body[data-view="browsing"] .content{
+      grid-template-columns: 1fr;
+    }
+    body[data-view="compare"] .content{
+      grid-template-columns: repeat(var(--grid-cols), minmax(0, 1fr));
+      align-items: start;
+    }
+
+    .empty{
+      display: none;
+      padding: 20px;
+      border: 1px dashed var(--border);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,0.6);
+      color: var(--muted);
+    }
+    body[data-view="compare"] .empty.is-visible{ display: block; grid-column: 1 / -1; }
+
+    .figure-card{
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      min-width: 0;
+    }
+    .figure-card.is-hidden{
+      display: none !important;
+    }
+
+    .figure-card__head{
+      padding: 12px 12px 10px 12px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .figure-card__titlewrap{
+      min-width: 0;
+      display: grid;
+      gap: 6px;
+    }
+    .badge{
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .badge__dot{
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--primary);
+      opacity: 0.9;
+    }
+    .figure-card__title{
+      font-weight: 750;
+      font-size: 14px;
+      margin: 0;
+      word-break: break-word;
+    }
+
+    .figure-card__actions{
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-top: 2px;
+    }
+    .selectchip{
+      display: none;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12px;
+      color: var(--muted);
+      cursor: pointer;
+      user-select: none;
+      background: #fff;
+      white-space: nowrap;
+    }
+    .selectchip input{
+      width: 16px; height: 16px;
+      margin: 0;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+    body[data-view="compare"] .selectchip{ display: inline-flex; }
+
+    .chart{
+      padding: 10px 10px 6px 10px;
+    }
+
+    .notes{
+      padding: 10px 12px 12px 12px;
+      border-top: 1px solid var(--border);
+      background: rgba(247,247,247,0.35);
+    }
+    .notes__head{
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 8px 0;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .infoicon{
+      width: 18px;
+      height: 18px;
+      border-radius: 7px;
+      display: grid;
+      place-items: center;
+      background: rgba(168,213,186,0.25);
+      color: #256b45;
+      border: 1px solid rgba(168,213,186,0.55);
+      font-weight: 800;
+      font-size: 12px;
+    }
+    .notes ul{
+      margin: 0;
+      padding: 0 0 0 16px;
+      color: var(--text);
+      font-size: 13px;
+    }
+    .notes li{ margin: 6px 0; }
+
+    details.source{
+      border-top: 1px solid var(--border);
+      background: #fff;
+    }
+    details.source summary{
+      padding: 10px 12px;
+      cursor: pointer;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 650;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    details.source summary::-webkit-details-marker{ display: none; }
+    details.source summary:focus{
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(102,153,204,0.15);
+    }
+    .chev{
+      width: 18px; height: 18px;
+      border-radius: 7px;
+      border: 1px solid var(--border);
+      display: grid;
+      place-items: center;
+      background: var(--bg);
+      color: var(--muted);
+      font-weight: 800;
+      font-size: 12px;
+      transform: rotate(0deg);
+      transition: transform 150ms ease;
+    }
+    details[open] .chev{ transform: rotate(90deg); }
+    pre{
+      margin: 0;
+      padding: 12px;
+      overflow: auto;
+      border-top: 1px solid var(--border);
+      background: #0b1020;
+      color: #d6deeb;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+    code{ font-family: var(--font-mono); }
+
+    .modal{
+      position: fixed;
+      inset: 0;
+      display: none;
+      place-items: center;
+      background: rgba(36,41,47,0.42);
+      z-index: 50;
+      padding: 18px;
+    }
+    .modal[aria-hidden="false"]{ display: grid; }
+
+    .dialog{
+      width: min(760px, 100%);
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 18px 60px rgba(0,0,0,0.18);
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .dialog__head{
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .dialog__head h2{
+      margin: 0;
+      font-size: 14px;
+      font-weight: 750;
+    }
+    .dialog__body{
+      padding: 12px 14px 14px 14px;
+      background: #fff;
+    }
+    .sysinfo{
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .sysinfo th, .sysinfo td{
+      border-bottom: 1px solid var(--border);
+      padding: 10px 6px;
+      vertical-align: top;
+    }
+    .sysinfo th{
+      text-align: left;
+      color: var(--muted);
+      font-weight: 650;
+      width: 200px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+    }
+    .sysinfo td{
+      color: var(--text);
+      word-break: break-word;
+    }
+
+    .sr-only{
+      position: absolute !important;
+      width: 1px !important;
+      height: 1px !important;
+      padding: 0 !important;
+      margin: -1px !important;
+      overflow: hidden !important;
+      clip: rect(0,0,0,0) !important;
+      white-space: nowrap !important;
+      border: 0 !important;
+    }
+  </style>
+
+  <script>
+  {{ plotly_js }}
+  </script>
+</head>
+
+<body data-view="browsing" data-sidebar="expanded">
+  <div class="app">
+    <aside class="sidebar" aria-label="Report navigator">
+      <div class="sidebar__top">
+        <div class="brand" title="{{ page_title }}">
+          <div class="brand__logo" aria-hidden="true"></div>
+          <div class="brand__text">
+            <div class="brand__title">PostgreSQL Hotspots v{{ version }}</div>
+            <div class="brand__sub">{{ report_title_base }} </div>
+          </div>
+        </div>
+
+        <div class="segmented" role="group" aria-label="View mode switcher">
+          <button id="btnBrowse" type="button" aria-pressed="true">Browse</button>
+          <button id="btnCompare" type="button" aria-pressed="false">Compare</button>
+        </div>
+
+        <div class="search">
+          <label for="searchInput">Search figures</label>
+          <input id="searchInput" type="search" placeholder="Type to filter…" autocomplete="off" />
+        </div>
+      </div>
+
+      <nav class="nav" aria-label="Figure list">
+        {% for c in categories %}
+        <section class="nav__group" data-category="{{ c['name']|e }}">
+          <h3>{{ c['name']|e }}</h3>
+          {% for it in c['items'] %}
+          <div class="nav__item"
+               role="button"
+               tabindex="0"
+               data-id="{{ it.id|e }}"
+               data-title="{{ it.title|e }}"
+               data-category="{{ c['name']|e }}"
+               aria-label="Figure: {{ it.title|e }}">
+            <input class="nav__check" type="checkbox" aria-label="Select {{ it.title|e }} for comparison" />
+            <div class="nav__icon" aria-hidden="true">▦</div>
+            <div class="nav__title">{{ it.title|e }}</div>
+          </div>
+          {% endfor %}
+        </section>
+        {% endfor %}
+      </nav>
+    </aside>
+
+    <main class="main">
+      <header class="toolbar" role="banner">
+        <div class="toolbar__left">
+          <button id="sidebarToggle" class="iconbtn" type="button" aria-label="Toggle sidebar">
+            <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 6h16M4 12h16M4 18h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+
+          <div class="reportmeta">
+            <div class="reportmeta__title">{{ report_type }} <span style="color: var(--muted); font-weight: 650;"></span></div>
+          </div>
+        </div>
+
+        <div class="toolbar__right">
+          <div class="gridctl" aria-label="Grid settings">
+            <span>Grid</span>
+            <select id="gridCols" aria-label="Grid columns">
+              <option value="1">1 col</option>
+              <option value="2" selected>2 col</option>
+              <option value="3">3 col</option>
+            </select>
+          </div>
+
+          <button id="sysInfoBtn" class="pill" type="button" aria-haspopup="dialog" aria-controls="sysInfoModal">
+            <strong>System</strong>
+            <span aria-hidden="true">ⓘ</span>
+          </button>
+        </div>
+      </header>
+
+      <section class="content" id="content" aria-label="Report content">
+        <div id="emptyState" class="empty" role="status" aria-live="polite">
+          Select figures in the sidebar to compare them side-by-side.
+        </div>
+
+        {% for f in figures %}
+        <article class="figure-card" id="{{ f.id|e }}" data-id="{{ f.id|e }}" data-title="{{ f.title|e }}" data-category="{{ f.category|e }}">
+          <div class="figure-card__head">
+            <div class="figure-card__titlewrap">
+              <div class="badge"><span class="badge__dot" aria-hidden="true"></span><span>{{ f.category|e }}</span></div>
+              <h2 class="figure-card__title">{{ f.title|e }}</h2>
+            </div>
+
+            <div class="figure-card__actions">
+              <label class="selectchip" title="Select for comparison">
+                <input class="cardCheck" type="checkbox" aria-label="Select {{ f.title|e }} for comparison"/>
+                <span>Compare</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="chart" aria-label="Chart">
+            {{ f.figure_html }}
+          </div>
+
+          {% if f.notes and f.notes|length > 0 %}
+          <div class="notes" aria-label="Analysis notes">
+            <div class="notes__head">
+              <span class="infoicon" aria-hidden="true">i</span>
+              <span>Notes</span>
+            </div>
+            <ul>
+              {% for n in f.notes %}
+              <li>{{ n }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+          {% endif %}
+
+        </article>
+        {% endfor %}
+      </section>
+    </main>
+  </div>
+
+  <div class="modal" id="sysInfoModal" role="dialog" aria-modal="true" aria-hidden="true" aria-label="System information dialog">
+    <div class="dialog" role="document">
+      <div class="dialog__head">
+        <h2>System Info</h2>
+        <button id="sysInfoClose" class="iconbtn" type="button" aria-label="Close dialog">
+          <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+      <div class="dialog__body">
+        <table class="sysinfo" aria-label="System info table">
+          <tbody>
+            {% for k, v in system_info_items %}
+            <tr>
+              <th>{{ k }}</th>
+              <td>{{ v }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const FIG_INDEX = {{ figures_index_json }};
+
+    const state = {
+      viewMode: 'browsing',
+      selectedIds: new Set(),
+      gridCols: 2,
+      searchQuery: '',
+      sidebar: 'expanded',
+    };
+
+    const els = {
+      body: document.body,
+      btnBrowse: document.getElementById('btnBrowse'),
+      btnCompare: document.getElementById('btnCompare'),
+      searchInput: document.getElementById('searchInput'),
+      sidebarToggle: document.getElementById('sidebarToggle'),
+      gridCols: document.getElementById('gridCols'),
+      emptyState: document.getElementById('emptyState'),
+      navItems: Array.from(document.querySelectorAll('.nav__item')),
+      navGroups: Array.from(document.querySelectorAll('.nav__group')),
+      cards: Array.from(document.querySelectorAll('.figure-card')),
+      sysInfoBtn: document.getElementById('sysInfoBtn'),
+      sysInfoModal: document.getElementById('sysInfoModal'),
+      sysInfoClose: document.getElementById('sysInfoClose'),
+    };
+
+    function loadPrefs(){
+      try{
+        const raw = localStorage.getItem('insight_stream_prefs');
+        if(!raw) return;
+        const p = JSON.parse(raw);
+        if(p && typeof p === 'object'){
+          if(p.viewMode === 'browsing' || p.viewMode === 'compare') state.viewMode = p.viewMode;
+          if([1,2,3].includes(p.gridCols)) state.gridCols = p.gridCols;
+          if(p.sidebar === 'collapsed' || p.sidebar === 'expanded') state.sidebar = p.sidebar;
+          if(Array.isArray(p.selectedIds)) state.selectedIds = new Set(p.selectedIds.filter(x => typeof x === 'string'));
+        }
+      }catch(_e){}
+    }
+
+    function savePrefs(){
+      try{
+        localStorage.setItem('insight_stream_prefs', JSON.stringify({
+          viewMode: state.viewMode,
+          gridCols: state.gridCols,
+          sidebar: state.sidebar,
+          selectedIds: Array.from(state.selectedIds),
+        }));
+      }catch(_e){}
+    }
+
+    function setViewMode(mode){
+      state.viewMode = mode;
+      els.body.setAttribute('data-view', mode);
+
+      els.btnBrowse.setAttribute('aria-pressed', mode === 'browsing' ? 'true' : 'false');
+      els.btnCompare.setAttribute('aria-pressed', mode === 'compare' ? 'true' : 'false');
+
+      render();
+      savePrefs();
+    }
+
+    function setSidebar(side){
+      state.sidebar = side;
+      els.body.setAttribute('data-sidebar', side);
+      savePrefs();
+    }
+
+    function toggleSidebar(){
+      setSidebar(state.sidebar === 'collapsed' ? 'expanded' : 'collapsed');
+    }
+
+    function setGridCols(n){
+      state.gridCols = n;
+      els.body.style.setProperty('--grid-cols', String(n));
+      requestAnimationFrame(resizeVisiblePlots);
+      savePrefs();
+    }
+
+    function normalize(s){
+      return (s || '').toString().toLowerCase().trim();
+    }
+
+    function applySearchFilter(){
+      const q = normalize(state.searchQuery);
+      const visibleByGroup = new Map();
+
+      els.navItems.forEach(item => {
+        const title = normalize(item.getAttribute('data-title'));
+        const cat = normalize(item.getAttribute('data-category'));
+        const match = (q === '') || title.includes(q) || cat.includes(q);
+        item.style.display = match ? '' : 'none';
+        if(match){
+          const g = item.getAttribute('data-category') || '';
+          visibleByGroup.set(g, (visibleByGroup.get(g) || 0) + 1);
+        }
+      });
+
+      els.navGroups.forEach(group => {
+        const cat = group.getAttribute('data-category') || '';
+        const count = visibleByGroup.get(cat) || 0;
+        group.style.display = count > 0 ? '' : 'none';
+      });
+    }
+
+    function syncSelectionUI(){
+      els.navItems.forEach(item => {
+        const id = item.getAttribute('data-id');
+        const cb = item.querySelector('.nav__check');
+        if(cb && id){
+          cb.checked = state.selectedIds.has(id);
+        }
+      });
+
+      els.cards.forEach(card => {
+        const id = card.getAttribute('data-id');
+        const cb = card.querySelector('.cardCheck');
+        if(cb && id){
+          cb.checked = state.selectedIds.has(id);
+        }
+      });
+    }
+
+    function render(){
+      applySearchFilter();
+
+      els.body.style.setProperty('--grid-cols', String(state.gridCols));
+      if(els.gridCols) els.gridCols.value = String(state.gridCols);
+
+      if(state.viewMode === 'browsing'){
+        els.cards.forEach(card => card.classList.remove('is-hidden'));
+        els.emptyState.classList.remove('is-visible');
+      }else{
+        let visibleCount = 0;
+        els.cards.forEach(card => {
+          const id = card.getAttribute('data-id');
+          const isSel = id && state.selectedIds.has(id);
+          card.classList.toggle('is-hidden', !isSel);
+          if(isSel) visibleCount++;
+        });
+        els.emptyState.classList.toggle('is-visible', visibleCount === 0);
+      }
+
+      syncSelectionUI();
+      requestAnimationFrame(resizeVisiblePlots);
+    }
+
+    function resizeVisiblePlots(){
+      try{
+        if(!window.Plotly || !window.Plotly.Plots) return;
+        const visible = document.querySelectorAll('.figure-card:not(.is-hidden) .js-plotly-plot');
+        visible.forEach(el => {
+          try{ window.Plotly.Plots.resize(el); }catch(_e){}
+        });
+      }catch(_e){}
+    }
+
+    function toggleSelection(id){
+      if(state.selectedIds.has(id)) state.selectedIds.delete(id);
+      else state.selectedIds.add(id);
+      render();
+      savePrefs();
+    }
+
+    function scrollToCard(id){
+      const el = document.getElementById(id);
+      if(!el) return;
+      el.scrollIntoView({behavior: 'smooth', block: 'start'});
+      el.setAttribute('tabindex', '-1');
+      el.focus({preventScroll: true});
+      setTimeout(() => el.removeAttribute('tabindex'), 800);
+    }
+
+    els.btnBrowse.addEventListener('click', () => setViewMode('browsing'));
+    els.btnCompare.addEventListener('click', () => setViewMode('compare'));
+    els.sidebarToggle.addEventListener('click', toggleSidebar);
+
+    els.searchInput.addEventListener('input', (e) => {
+      state.searchQuery = e.target.value || '';
+      applySearchFilter();
+    });
+
+    els.gridCols.addEventListener('change', (e) => {
+      const n = parseInt(e.target.value, 10);
+      if([1,2,3].includes(n)) setGridCols(n);
+    });
+
+    els.navItems.forEach(item => {
+      const id = item.getAttribute('data-id');
+      if(!id) return;
+
+      function activate(){
+        if(state.viewMode === 'browsing'){
+          scrollToCard(id);
+        }else{
+          toggleSelection(id);
+        }
+      }
+
+      item.addEventListener('click', (evt) => {
+        const t = evt.target;
+        if(t && t.classList && t.classList.contains('nav__check')) return;
+        activate();
+      });
+
+      item.addEventListener('keydown', (evt) => {
+        if(evt.key === 'Enter' || evt.key === ' '){
+          evt.preventDefault();
+          activate();
+        }
+      });
+
+      const cb = item.querySelector('.nav__check');
+      if(cb){
+        cb.addEventListener('change', () => toggleSelection(id));
+      }
+    });
+
+    els.cards.forEach(card => {
+      const id = card.getAttribute('data-id');
+      if(!id) return;
+      const cb = card.querySelector('.cardCheck');
+      if(cb){
+        cb.addEventListener('change', () => toggleSelection(id));
+      }
+    });
+
+    function openModal(){
+      els.sysInfoModal.setAttribute('aria-hidden', 'false');
+      els.sysInfoClose.focus();
+    }
+    function closeModal(){
+      els.sysInfoModal.setAttribute('aria-hidden', 'true');
+      els.sysInfoBtn.focus();
+    }
+    els.sysInfoBtn.addEventListener('click', openModal);
+    els.sysInfoClose.addEventListener('click', closeModal);
+    els.sysInfoModal.addEventListener('click', (e) => {
+      if(e.target === els.sysInfoModal) closeModal();
+    });
+    window.addEventListener('keydown', (e) => {
+      if(e.key === 'Escape' && els.sysInfoModal.getAttribute('aria-hidden') === 'false'){
+        closeModal();
+      }
+    });
+
+    window.addEventListener('resize', () => requestAnimationFrame(resizeVisiblePlots));
+
+    (function init(){
+      loadPrefs();
+      els.body.setAttribute('data-sidebar', state.sidebar);
+      els.body.style.setProperty('--grid-cols', String(state.gridCols));
+      if(els.gridCols) els.gridCols.value = String(state.gridCols);
+      setViewMode(state.viewMode);
+      render();
+    })();
+  </script>
+</body>
+</html>

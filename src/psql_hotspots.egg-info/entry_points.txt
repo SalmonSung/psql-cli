@@ -1,0 +1,2 @@
+[console_scripts]
+pshs = pshs:main
