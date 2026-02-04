@@ -1,7 +1,7 @@
 from __future__ import annotations
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import List, Tuple, Optional, Dict, Union
+from typing import List, Tuple, Optional, Dict, Union, Any
 
 
 @dataclass
@@ -235,7 +235,7 @@ class CloudSQLMetrics:
         default_factory=lambda: TimeSeries(unit="bytes")
     )
     memory_components: Dict[str, TimeSeries] = field(default_factory=dict)
-
+    instance_details: Dict[str, Any] = field(default_factory=dict)
 
     pg_stat_statements_top_queries: List[Dict] = field(default_factory=list)
     pg_stat_statements_heavy_wal: List[Dict] = field(default_factory=list)
