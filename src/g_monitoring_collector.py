@@ -36,6 +36,25 @@ class GMonitoringCollector:
             start = end - timedelta(hours=self.duration_hours)
             return start, end
 
+    def check_monitoring_access(self) -> Tuple[bool, str]:
+        """
+        Check whether the current credentials can access the Cloud Monitoring API.
+
+        Returns:
+            (True, "OK") if accessible
+            (False, "<error message>") otherwise
+        """
+        project_name = f"projects/{self.project_id}"
+        try:
+            pager = self._monitoring_client.list_metric_descriptors(
+                request={"name": project_name, "page_size": 1}
+            )
+            next(iter(pager), None)
+            return True, "OK"
+        except Exception as exc:
+            return False, str(exc)
+
+
     def load_wal_flushed_bytes_count(self) -> WALFlushedBytesCountMetric:
         client = self._monitoring_client
         project_name = f"projects/{self.project_id}"

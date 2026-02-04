@@ -1,5 +1,6 @@
 # PostgreSQL Hotspots
 
+*It is easy to blame on the DB, but let's prove that it's users' fault*  
 **PostgreSQL Hotspots** is a diagnostic tool built for high-pressure “database down” situations. It analyzes database
 behavior without connecting to the database itself, allowing you to identify performance bottlenecks and resource
 contention even when PostgreSQL is completely unresponsive. Besides, it generates a static `.html` file along with suspicious info in `.txt` files - Simply the analysis report sharing process
@@ -33,11 +34,13 @@ No telemetry, metrics, or sensitive metadata are sent to external or third-party
 - [Usage](#usage)
 - [Command notes](#command-notes)
 - [History](#history)
+  - [v.1.0.0](#v100)
   - [v.0.1.0](#v010)
 
 ## Prerequisites  
 
-* Google Cloud CLI (`gcloud`) installed if you've never generated ADC on your own machine.
+- Google Cloud CLI (`gcloud`) installed if you've never generated ADC on your own machine.
+- Being granted viewer role for `Cloud Monitoring API` and `Cloud SQL Admin API`
 
 # Installation  
 
@@ -65,6 +68,8 @@ pshs generate PROJECT_ID INSTANCE_ID OUTPUT_DIR --start-time 2026-01-01T14:00 --
 * `--safe` (default) skips ADC login; use `--no-safe` to trigger ADC login.
 
 # History  
+## v.1.0.0
+- **Breaking change:** Introduces new minimum requirements — Cloud Monitoring API and Cloud SQL Admin API. This version is not backward-compatible with v0.1.x.
 
 ## v.0.1.0  
 - Support command `generate`

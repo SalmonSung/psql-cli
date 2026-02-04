@@ -12,6 +12,7 @@ from cloudsql_postgres import CloudSQLPostgres
 import config as config
 
 from g_monitoring_collector import GMonitoringCollector
+from cloudsql_admin_collector import CloudSQLAdminCollector
 
 
 # MetricSpec + MetricsLoaderMP come from the ProcessPool version we wrote earlier
@@ -36,8 +37,13 @@ def analysis_entry(project_id, instance_id, output_dir, start_time, end_time, du
     collector = GMonitoringCollector(project_id, instance_id, start_time=start_time, end_time=end_time,
                                    duration_hours=duration_hours)
 
+
+
     metrics = collector.generate_cloudsql_metrics()
     start_time, end_time = collector.get_start_end_time()
+
+    collector = CloudSQLAdminCollector(project_id, instance_id)
+    metrics.instance_details = collector.get_instance_summary()
 
     parent_dir_path = Path(output_dir)
     report_dir_path = parent_dir_path / f"PostgreSQL_Hotspots_{start_time.strftime(time_fmt)}_{end_time.strftime(time_fmt)}"
