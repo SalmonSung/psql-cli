@@ -26,13 +26,13 @@
 
 * **Emergency-Ready Diagnostics:** The tool pulls metrics from Google Cloud Monitoring, not from PostgreSQL system views. This means it continues to work when the database is hung, locked, or under extreme load.
 * **Zero-Impact Observation:** Unlike `pg_stat_statements` or active SQL polling, PostgreSQL Hotspots adds no load to your production database. All analysis is performed out-of-band, ensuring diagnostics never make an ongoing incident worse.
-* **Interactive Visual Correlation:** Automatically generates rich, interactive reports that correlate:
+* **Interactive Visual Correlation:** generates rich, interactive reports into a `.html` file:
   - database activity history  
   - most expensive SQL statements  
   - lock waits and contention
 
 and more...  
-These views make it easy to pinpoint when a performance hotspot started and what caused it, while providing more actionable context than raw Google Cloud Monitoring dashboards.
+
 
 # Safety & Security
 
