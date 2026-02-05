@@ -1,5 +1,5 @@
 DEBUG = False
-VERSION = '1.1.0'
+VERSION = '1.1.2'
 GROUP_BY_MINUTES = 10
 OUTPUT_DIR_PATH = None
 project_id = None

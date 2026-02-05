@@ -59,13 +59,13 @@ def transaction_ops(metrics: CloudSQLMetrics) -> go.Figure:
             # hoverdistance=50,  # optional: how far from the cursor Plotly will look for points
         )
         fig.update_layout(
-            height=300,
-            # margin=dict(l=20, r=20, t=60, b=120),
+            height=400,
+            margin=dict(l=20, r=20, t=60, b=150),
             legend=dict(
                 orientation="h",
                 xanchor="left",
                 x=0.0,
                 yanchor="top",
-                y=-0.10
+                y=-0.25
             ))
     return fig
