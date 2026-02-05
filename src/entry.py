@@ -58,7 +58,10 @@ def analysis_entry(project_id, instance_id, output_dir, start_time, end_time, du
         report_title_base="Google Cloud Monitoring Edition",
         system_info={
             "timeframe": f"{start_time.strftime(time_fmt)} ~ {end_time.strftime(time_fmt)}",
-            "system": f"{project_id}:{instance_id}",
+            "tier": metrics.instance_details["tier"],
+            "cpu core": metrics.instance_details["cpu_core"],
+            "availability": metrics.instance_details["availability"],
+            "project:instance": f"{project_id}:{instance_id}",
         },
     )
 
