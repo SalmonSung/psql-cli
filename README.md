@@ -1,20 +1,37 @@
-# PostgreSQL Hotspots
+<div align="center">
 
-*It is easy to blame on the DB, but let's prove that it's users' fault*  
-**PostgreSQL Hotspots** is a diagnostic tool built for high-pressure “database down” situations. It analyzes database
-behavior without connecting to the database itself, allowing you to identify performance bottlenecks and resource
-contention even when PostgreSQL is completely unresponsive. Besides, it generates a static `.html` file along with suspicious info in `.txt` files - Simply the analysis report sharing process
-<img width="1781" height="881" alt="image" src="https://github.com/user-attachments/assets/569acc47-c61a-450e-b326-d6ce9ba13a00" />
+<img width="1024" height="604" alt="postgreSQL Hotspots logo v2" src="https://github.com/user-attachments/assets/981ce993-5a90-4c05-b510-a4475bd5367d" />
 
+*Postgres on fire? Start here.*
+
+
+<p>
+
+[![GitHub Stars](https://img.shields.io/github/stars/SalmonSung/psql-cli?style=square)](https://github.com/SalmonSung/psql-cli/stargazers)
+[![Version](https://img.shields.io/badge/version-v1.1.0-4CAF50.svg)](https://github.com/SalmonSung/psql-cli)
+
+
+</p> 
+
+<b> A diagnostic tool built for high-pressure “database down” situations... <br></b>
+<b> Analyzes database behavior without connecting to the database itself </b>
+
+<b> Build on Google Cloud Monitoring </b>
+
+</p>
+
+</div>
 
 # Key Features
 
 * **Emergency-Ready Diagnostics:** The tool pulls metrics from Google Cloud Monitoring, not from PostgreSQL system views. This means it continues to work when the database is hung, locked, or under extreme load.
 * **Zero-Impact Observation:** Unlike `pg_stat_statements` or active SQL polling, PostgreSQL Hotspots adds no load to your production database. All analysis is performed out-of-band, ensuring diagnostics never make an ongoing incident worse.
 * **Interactive Visual Correlation:** Automatically generates rich, interactive reports that correlate:
-  - database activity history
-  - most expensive SQL statements
-  - lock waits and contention  
+  - database activity history  
+  - most expensive SQL statements  
+  - lock waits and contention
+
+and more...  
 These views make it easy to pinpoint when a performance hotspot started and what caused it, while providing more actionable context than raw Google Cloud Monitoring dashboards.
 
 # Safety & Security
