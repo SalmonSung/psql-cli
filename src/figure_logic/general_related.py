@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Dict
 
 from utils import bytes_to_unit
 import config as config
@@ -39,16 +39,24 @@ def general_database_overview(metrics: CloudSQLMetrics) -> go.Figure:
     x_ts = metrics.cpu_utilization.timestamps()
     y_cpu_u = metrics.cpu_utilization.data()
     y_cut = metrics.cpu_usage_time.data()
-
+    grouped_sql_count: Dict[datetime, int] = {}
+    for item in metrics.perquery_latency_metrics:
+        for ts in x_ts:
+            count = item.perquery_count.get_by_ts(ts)
+            grouped_sql_count[ts] = grouped_sql_count.get(ts, 0) + count
+    sorted_counts = [
+        count
+        for _, count in sorted(grouped_sql_count.items())
+    ]
 
     fig.add_trace(
         go.Bar(
             x=x_ts,
-            y=y_cut,
-            name="cpu_usage_time",
-            marker=dict(color="lightblue"),
+            y=sorted_counts,
+            name="sql_counts",
+            marker=dict(color="lightcoral"),
             opacity=0.5,
-            hovertemplate="%{y:,.1f} CPU-Sec<extra></extra>",
+            hovertemplate="<b>Count:</b> %{y}<extra></extra>",
             showlegend=False,
         ),
         secondary_y=True,
@@ -218,8 +226,8 @@ def general_database_overview(metrics: CloudSQLMetrics) -> go.Figure:
     )
 
     fig.update_yaxes(
-        title_text="CPU Usage Time(CPU-seconds)",
-        title_font=dict(color="lightblue"),
+        title_text="SQL Statement",
+        title_font=dict(color="lightcoral"),
         # tickfont=dict(color="grey"),
         secondary_y=True,
         row=1, col=1
