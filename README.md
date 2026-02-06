@@ -8,7 +8,7 @@
 <p>
 
 [![GitHub Stars](https://img.shields.io/github/stars/SalmonSung/psql-cli?style=square)](https://github.com/SalmonSung/psql-cli/stargazers)
-[![Version](https://img.shields.io/badge/version-v1.3.0-4CAF50.svg)](https://github.com/SalmonSung/psql-cli)
+[![Version](https://img.shields.io/badge/version-v1.4.1-4CAF50.svg)](https://github.com/SalmonSung/psql-cli)
 
 
 </p> 
@@ -17,8 +17,6 @@
 <b> Analyzes database behavior without connecting to the database itself </b>
 
 <b> Build on Google Cloud Monitoring </b>
-
-</p>
 
 </div>
 
@@ -32,7 +30,18 @@
   - lock waits and contention
 
 and more...  
-<img width="1243" height="651" alt="image" src="https://github.com/user-attachments/assets/3d92c5c4-a46f-440b-ad2e-fca93e5de4af" />
+<div align="center">
+  <p>
+    <img width="1243" height="651" alt="image" src="https://github.com/user-attachments/assets/3d92c5c4-a46f-440b-ad2e-fca93e5de4af" />  
+    <b>The Metrics have been mapped into a diagnosis-ready format for rapid trouble-shooting</b>b<br>
+  </p>
+
+
+  
+<img width="1892" height="874" alt="image" src="https://github.com/user-attachments/assets/f3d91132-c172-4cf4-af2f-30333871f5cb" />
+<b>Compare Mode:</b> Displayed multiple figures in a row for better comparison <br>
+
+</div>
 
 
 
@@ -68,6 +77,9 @@ No telemetry, metrics, or sensitive metadata are sent to external or third-party
 ```bash
 pip install -e .
 ```
+
+or Download [v1.4.1 app](https://github.com/SalmonSung/psql-cli/releases/tag/v1.4.1)
+
 
 # Usage  
 
