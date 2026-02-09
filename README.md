@@ -43,7 +43,9 @@ and more...
 
 </div>
 
-
+# Use Case
+You can find some cases that have been solved with PostgreSQL Hotspots here:  
+- [When High CPU Is Normal — Until It Isn’t: A PostgreSQL Incident Analysis](https://medium.com/@SungSalmon/most-postgresql-performance-articles-focus-on-query-optimization-missing-indexes-bad-execution-57be5366eb61)
 
 # Safety & Security
 
